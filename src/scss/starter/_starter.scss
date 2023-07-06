@@ -1,0 +1,116 @@
+//Your preferece to use any of these two reset file
+//@import '_meyerReset' 
+@import '_normalizeReset';
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+%reset-margin-padding {
+    margin: 0;
+    padding: 0;
+}
+
+//This should makes the most sense
+//Default value for this is 
+//left to right, 1440px, auto, 0 auto
+//But I found out that it's needed to explicitly declare the value or else it will apply things
+@mixin content-wraper($max-width: none, $min-width: auto, $max-height: none, $min-height: auto) {
+    max-width: $max-width;
+    min-width: $min-width;
+    max-height: $max-height;
+    min-height: $min-height;
+}
+
+//General mixins
+@mixin flex($display: flex, $direction: row, $wrap: nowrap, $justify: normal, $align: normal) {
+    display: $display;
+    flex-direction: $direction;
+    flex-wrap: $wrap;
+    justify-content: $justify;
+    align-items: $align;
+}
+
+@mixin grid($display: grid, $column: none, $row: none) {
+    display: $display;
+    grid-template-columns: $column;
+    grid-template-rows: $row;
+}
+
+//Use for grid template areas, use map to map section to area
+//Search for interpolation in sass if you forget how this
+//work, this accepts a map.
+//This down here is an example of ussage.
+//General layout
+//body {
+//    @include grid($column: 1fr 2fr);
+//    @include defineGridArea(
+//        (
+//            'aside': aside,
+//            'main': main
+//        )
+//    );
+//    grid-template-areas: 
+//        'aside main'
+//    ;
+//}
+@mixin defineGridArea($areas){
+    @each $area, $name in $areas{
+        #{$area} {
+            grid-area: $name;
+        }
+    }
+}
+
+//Typography mixin for goggle
+@mixin google-font($font){
+    @import url('https://fonts.googleapis.com/css?family=#{$font}');
+}
+
+//Font awesome icon since it's ussage is very easy, but
+//it require a cdn, you can take time to set it up
+//or use cdnjs, paste this to head of html file then use as normal
+// link rel css here -> https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css
+
+//Fall back fonts, Usually roboto and sans serif, techy stuff, it's good I think
+$font-fallback: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+body {
+    @debug "Default body content wraper to @include content-wraper(1440px, auto, 0 auto)";
+    //@include content-wraper(1440px, auto, 0 auto);
+}
+
+ul {
+   list-style-type: none;
+}
+
+//Damn underline, go fuck yourself
+a {
+    text-decoration: none;
+}
+
+//Forms and their widgets 
+//----------------------
+//Font style that should be the same everywhere 
+//But this should be in the normalize CSS reset file
+/*
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 100%;
+}*/
+
+//For consistent in any border,padding n shits 
+//Didn't see it in the normalize reset CSS
+input,
+textarea,
+select,
+button {
+  //It depends here
+  //width: 150px;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
