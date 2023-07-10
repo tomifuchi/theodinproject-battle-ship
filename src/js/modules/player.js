@@ -9,15 +9,19 @@ function Player(name) {
     // Battleship (4 sqs)
     // Carrier (5 sqs)
     //Usually we bind opponent board to this function
-    function attack(coor, opponentReceiveAttack) {
+    function attack(coor, opponent) {
         if(this.turn) {
-            return opponentReceiveAttack(coor);
+            return opponent.gameBoard.receiveAttack(coor);
         }
+    }
+
+    function newBoard() {
+        this.gameBoard = Gameboard(10, 10);
     }
 
     return Object.assign(
         Object.create({
-            attack
+            attack, newBoard,
         }),
         {
             gameBoard,

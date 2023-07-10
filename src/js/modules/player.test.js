@@ -31,30 +31,27 @@ test('Player to take turn launch an attack to other player', () => {
         playerB.turn = !playerB.turn;
     }
 
-    const playerBGameBoard = playerB.gameBoard.receiveAttack.bind(playerB.gameBoard);
-    const playerAGameBoard = playerA.gameBoard.receiveAttack.bind(playerA.gameBoard);
-
     //Say playerA get to go first
     playerA.turn = true;
 
 
-    expect(playerA.attack([2, 2], playerBGameBoard)).toEqual([2, 2]);
+    expect(playerA.attack([2, 2], playerB)).toEqual([2, 2]);
     changeTurn(); //B turn
-    expect(playerB.attack([2, 3], playerAGameBoard)).toEqual([2, 3]);
+    expect(playerB.attack([2, 3], playerA)).toEqual([2, 3]);
     changeTurn(); //A turn
 
     //Maybe changeTurn can run if it's not undefined
     //Should not be able to shoot the same coordinate twice
-    expect(playerA.attack([2, 2], playerBGameBoard)).toEqual(undefined);
-    expect(playerA.attack([2, 3], playerBGameBoard)).toEqual([2, 3]);
+    expect(playerA.attack([2, 2], playerB)).toEqual(undefined);
+    expect(playerA.attack([2, 3], playerB)).toEqual([2, 3]);
     changeTurn(); //B turn
 
     //Even if hit since this is not player A turn it can't make any move
-    expect(playerA.attack([4, 5], playerBGameBoard)).toEqual(undefined);
+    expect(playerA.attack([4, 5], playerB)).toEqual(undefined);
 
-    expect(playerB.attack([2, 4], playerAGameBoard)).toEqual([2, 4]);
+    expect(playerB.attack([2, 4], playerA)).toEqual([2, 4]);
     changeTurn(); //A turn
-    expect(playerA.attack([2, 4], playerBGameBoard)).toEqual([2, 4]);
+    expect(playerA.attack([2, 4], playerB)).toEqual([2, 4]);
 
 
     //Player A Board
