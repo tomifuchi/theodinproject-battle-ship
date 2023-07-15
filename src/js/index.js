@@ -77,6 +77,7 @@ Finish it up
 
 */
 
+/*
 //Main game loop
 const Player = require('./modules/player');
 const Logger = require('./modules/sub_modules/logger');
@@ -169,4 +170,4 @@ function gameLoop() {
     console.log('END ROUND');
     console.log('==================')
 }
-
+*/

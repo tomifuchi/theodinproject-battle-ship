@@ -64,6 +64,7 @@ test('Hit should increase number of hits', () => {
 
 test('Should sink if hit is equal to length', () => {
     const {Destroyer} = setup();
+    expect(Destroyer.isSunk()).toEqual(false);
 
     Destroyer.hit();
     Destroyer.hit();

@@ -1,5 +1,12 @@
 const Ship = require('./ship'); //Prepare to use pubsub module to fix this.
 
+//Task, code up the tracking board. This board is used for displaying
+//when you hit the enemy it should display where you'd hit and where you missed. To not fire again.
+//Also to gather intelligence when scoring a hit, this is to plan your shot.
+//I think we should add display argument to then return a semi functional board. to then add to 
+//gameBoard object of the player. Add functional things that necessary only, it'd be better
+//to build functionality then when shitting out objects we plug functionalities onto it.
+//NOTE this is a dumb fucking idea since it violates the SOLID. 
 function Gameboard(n=10, m=10) {
 //This board only purpose is to display the edge list sequentially and not take in invalid edgelist.
     const limY = n;
@@ -41,15 +48,8 @@ function Gameboard(n=10, m=10) {
     //[(6,0)  ] [(6,1)  ] [(6,2)  ] [(6,3)  ] [(6,4)  ] [(6,5)  ] [(6,6)  ] [(6,7)  ]
     //[(7,0)  ] [(7,1)  ] [(7,2)  ] [(7,3)  ] [(7,4)  ] [(7,5)  ] [(7,6)  ] [(7,7)  ]
 
-    //Clean the board
-    function wipeBoard() {
-        for (let i = 0; i < this.limY; i++) {
-            for (let j = 0; j < this.limX; j++) {
-                this.board[i][j] = ' ';
-            }
-        }
-    }
 
+    //For your fleet
     //Place a ship at x and y
     function placeShip(coor, vesselType, orientation) {
         if (this.checkShipPlacementCoordinate(coor) && (orientation === 'vertical' || orientation === 'horizontal')) {
@@ -81,7 +81,7 @@ function Gameboard(n=10, m=10) {
         return this.board[coor[0]][coor[1]];
     }
 
-    //helper 
+    //Check invalid coordinate form
     function isCoordinate(a) {
         return (a instanceof Array && a.length == 2 && typeof a[0] === 'number' && typeof a[1] === 'number')
     }
@@ -95,6 +95,7 @@ function Gameboard(n=10, m=10) {
         return (this.checkCoordinate(coor) && this.lookupCoordinate(coor) === undefined);
     }
 
+    //CHeck out of bound or invalid cooridnate
     function checkCoordinate(coor) {
         return (isCoordinate(coor) && coor[0] >= 0 && coor[0] < this.limY && coor[1] >= 0 && coor[1] < this.limX);
     }
@@ -106,10 +107,12 @@ function Gameboard(n=10, m=10) {
             if(Ship.isShipObject(ship)) {
                 ship.hit();
                 this.board[coor[0]][coor[1]] = 'hit';
-                return coor;
+                //return {shipType: ship.name, coor, hit: true}; //This is shotInfo here, this will be returned to your opponent
+                return coor; //This is shotInfo here, this will be returned to your opponent
             } else if(ship === undefined) {
                 this.board[coor[0]][coor[1]] = 'miss';
-                return coor;
+                //return {shipType: undefined, coor, hit: false}; //This is also shotInfo
+                return coor; //This is also shotInfo
             } 
         }
         return undefined;

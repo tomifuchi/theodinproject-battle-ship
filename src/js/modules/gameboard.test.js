@@ -26,6 +26,7 @@ const setup = (n=10, m=10) => {
     return testBoard;
 }
 
+//Testing gameboard for a player
 test('Check ship placement coordinate', () => {
     let testBoard = setup();
 

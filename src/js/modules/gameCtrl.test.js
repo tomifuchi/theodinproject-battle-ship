@@ -22,11 +22,11 @@ function generate2ElementArrays() {
 }
 
 const presetsShipsPlacement = [
-        {shipCoordinate: [0, 0], ship: { name: 'Destroyer', length: 2 }, orientation: 'vertical'},
-        {shipCoordinate: [2, 2], ship: { name: 'Submarine', length: 3 }, orientation: 'horizontal'},
-        {shipCoordinate: [4, 5], ship: { name: 'Cruiser', length: 3 }, orientation: 'horizontal'},
-        {shipCoordinate: [7, 1], ship: { name: 'Battleship', length: 4 }, orientation: 'horizontal'},
-        {shipCoordinate: [5, 5], ship: { name: 'Carrier', length: 5 }, orientation: 'vertical'},
+    {shipCoordinate: [0, 0], ship: { name: 'Destroyer', length: 2 }, orientation: 'vertical'},
+    {shipCoordinate: [2, 2], ship: { name: 'Submarine', length: 3 }, orientation: 'horizontal'},
+    {shipCoordinate: [4, 5], ship: { name: 'Cruiser', length: 3 }, orientation: 'horizontal'},
+    {shipCoordinate: [7, 1], ship: { name: 'Battleship', length: 4 }, orientation: 'horizontal'},
+    {shipCoordinate: [5, 5], ship: { name: 'Carrier', length: 5 }, orientation: 'vertical'},
 ];
 
 const playerMove = [
