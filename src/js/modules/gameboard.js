@@ -1,57 +1,44 @@
 const Ship = require('./ship'); //Prepare to use pubsub module to fix this.
 
-//Task, code up the tracking board. This board is used for displaying
-//when you hit the enemy it should display where you'd hit and where you missed. To not fire again.
-//Also to gather intelligence when scoring a hit, this is to plan your shot.
-//I think we should add display argument to then return a semi functional board. to then add to 
-//gameBoard object of the player. Add functional things that necessary only, it'd be better
-//to build functionality then when shitting out objects we plug functionalities onto it.
-//NOTE this is a dumb fucking idea since it violates the SOLID. 
-function Gameboard(n=10, m=10) {
-//This board only purpose is to display the edge list sequentially and not take in invalid edgelist.
-    const limY = n;
-    const limX = m;
-    const shipsPlacement = {};
-    const board = new Array(n);
+/*
+    Potential improvements: 
+        * Graph representation: Instead of matrices you can change it into combo using edgelist with
+    binary search tree to quickly query the ship.
+    Require: BinaryTree, edgeList
+*/
 
-    //Set up the board with undefined as the empty state
-    for (let i = 0; i < m; i++) {
-        board[i] = new Array(m).fill(undefined);
-    }
-
-    function printBoard(clean = false) {
-        for (let i = 0; i < this.board.length; i++) {
-            let row = '';
-            for (let j = 0; j < this.board[i].length; j++) {
-                row += (clean ?  `[ `: `[ (${i},${j}) `) + ((this.board[i][j]) ? (((typeof this.board[i][j]) === 'string') ? `${this.board[i][j]} ] `:`${this.board[i][j].name} ] `): ` ] `);
-            }
-            console.log(row);
+function printBoard(clean = false) {
+    for (let i = 0; i < this.board.length; i++) {
+        let row = '';
+        for (let j = 0; j < this.board[i].length; j++) {
+            row += (clean ?  `[ `: `[ (${i},${j}) `) + ((this.board[i][j]) ? (((typeof this.board[i][j]) === 'string') ? `${this.board[i][j]} ] `:`${this.board[i][j].name} ] `): ` ] `);
         }
+        console.log(row);
     }
+}
 
-    //Either clean                                                                                                                                                                                            
-    //[1] [ ] [ ] [ ] [ ] [ ] [ ] [ ]                                                                                                                                                                         
-    //[ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]                                                                                                                                                                         
-    //[ ] [2] [ ] [ ] [ ] [ ] [ ] [ ]
-    //[ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
-    //[3] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
-    //[ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
-    //[ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
-    //[ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
-    //Or display the coordinates by giving false or true,
-    //[(0,0)  ] [(0,1)  ] [(0,2)  ] [(0,3)  ] [(0,4)  ] [(0,5)  ] [(0,6)  ] [(0,7)  ]
-    //[(1,0)  ] [(1,1)  ] [(1,2)  ] [(1,3) A] [(1,4)  ] [(1,5) B] [(1,6)  ] [(1,7)  ]
-    //[(2,0)  ] [(2,1)  ] [(2,2) H] [(2,3)  ] [(2,4)  ] [(2,5)  ] [(2,6) C] [(2,7)  ]
-    //[(3,0)  ] [(3,1)  ] [(3,2)  ] [(3,3)  ] [(3,4) O] [(3,5)  ] [(3,6)  ] [(3,7)  ]
-    //[(4,0)  ] [(4,1)  ] [(4,2) G] [(4,3)  ] [(4,4)  ] [(4,5)  ] [(4,6) D] [(4,7)  ]
-    //[(5,0)  ] [(5,1)  ] [(5,2)  ] [(5,3) F] [(5,4)  ] [(5,5) E] [(5,6)  ] [(5,7)  ]
-    //[(6,0)  ] [(6,1)  ] [(6,2)  ] [(6,3)  ] [(6,4)  ] [(6,5)  ] [(6,6)  ] [(6,7)  ]
-    //[(7,0)  ] [(7,1)  ] [(7,2)  ] [(7,3)  ] [(7,4)  ] [(7,5)  ] [(7,6)  ] [(7,7)  ]
+//Query the board 
+function lookupCoordinate(coor) {
+    return this.board[coor[0]][coor[1]];
+}
 
+//Check invalid coordinate form
+function isCoordinate(a) {
+    return (a instanceof Array && a.length == 2 && typeof a[0] === 'number' && typeof a[1] === 'number')
+}
 
-    //For your fleet
-    //Place a ship at x and y
-    function placeShip(coor, vesselType, orientation) {
+//Check out of bound or invalid cooridnate
+function checkCoordinate(coor) {
+    return (isCoordinate(coor) && coor[0] >= 0 && coor[0] < this.limY && coor[1] >= 0 && coor[1] < this.limX);
+}
+
+const GameBoardProto = {
+    printBoard,
+    checkCoordinate,
+    lookupCoordinate,
+
+    //Place a ship at a coordinate with specified orientation
+    placeShip: function placeShip(coor, vesselType, orientation) {
         if (this.checkShipPlacementCoordinate(coor) && (orientation === 'vertical' || orientation === 'horizontal')) {
             //Pubsub message goes here
             const ship = Ship(vesselType);
@@ -74,66 +61,94 @@ function Gameboard(n=10, m=10) {
                 return shipCoordinates;
             } //else do something with invalid inputs.
         } //Else do something to invalid arguments.
-    }
+    },
 
-    //Helper
-    function lookupCoordinate(coor) {
-        return this.board[coor[0]][coor[1]];
-    }
-
-    //Check invalid coordinate form
-    function isCoordinate(a) {
-        return (a instanceof Array && a.length == 2 && typeof a[0] === 'number' && typeof a[1] === 'number')
-    }
-
-    //checkValidCoordinate will be use check and receive an actionable coordinate, we can fire if we want to at that coordinate. Should
-    //it not valid it will return undefined.
+    //Check to see if we can place a ship here
     //* Is a coordinate
     //* Within the limit of the playing board
     //* And it should be undefined.
-    function checkShipPlacementCoordinate(coor) {
+    checkShipPlacementCoordinate: function checkShipPlacementCoordinate(coor) {
         return (this.checkCoordinate(coor) && this.lookupCoordinate(coor) === undefined);
-    }
-
-    //CHeck out of bound or invalid cooridnate
-    function checkCoordinate(coor) {
-        return (isCoordinate(coor) && coor[0] >= 0 && coor[0] < this.limY && coor[1] >= 0 && coor[1] < this.limX);
-    }
+    },
 
     //Receive attack and check attack is kinda funky, try to refactor this area here
-    function receiveAttack(coor) {
+    //it receive a coordinate then mark with either hit or miss if the coordinate is valid. Also
+    //return shotInfo which is {shipName: undefined/<Vessel type name>, coor} to be put into trackingBoard of your opponent
+    receiveAttack: function receiveAttack(coor) {
         if(this.checkCoordinate(coor)) {
             const ship = this.lookupCoordinate(coor);
             if(Ship.isShipObject(ship)) {
                 ship.hit();
                 this.board[coor[0]][coor[1]] = 'hit';
-                //return {shipType: ship.name, coor, hit: true}; //This is shotInfo here, this will be returned to your opponent
-                return coor; //This is shotInfo here, this will be returned to your opponent
+                return {value: ship.name, coor}; //This is shotInfo here, this will be returned to your opponent to put on their tracking board
             } else if(ship === undefined) {
                 this.board[coor[0]][coor[1]] = 'miss';
-                //return {shipType: undefined, coor, hit: false}; //This is also shotInfo
-                return coor; //This is also shotInfo
+                return {value: 'miss', coor}; //This is also shotInfo
             } 
         }
         return undefined;
-    }
+    },
 
-    function isAllSunk() {
+    isAllSunk: function isAllSunk() {
         const shipsArray = Object.entries(this.shipsPlacement).map(entry => entry[1].obj);
         return shipsArray.every(ship => ship.isSunk())
+    },
+}
+
+const TrackingGameBoardProto = {
+    printBoard,
+    checkCoordinate,
+    lookupCoordinate,
+
+    checkShotPlacementCoordinate: function checkShotPlacementCoordinate(coor) {
+        return (this.checkCoordinate(coor) && this.lookupCoordinate(coor) === undefined);
+    },
+
+    //Place shot on the tracking board is it a hit or a miss and what type of vessel it is
+    //Shot info should connect with receiattack returning shotInfo which contains {hit: true/false, coordinateInfo: Ship/undefined}
+    placeShot: function placeShot(shotInfo) {
+        if(shotInfo && this.checkShotPlacementCoordinate(shotInfo.coor)){
+            this.board[shotInfo.coor[0]][shotInfo.coor[1]] = shotInfo.value;
+            return shotInfo.value;
+        }
+    },
+}
+
+function Gameboard(n=10, m=10) {
+    const limY = n;
+    const limX = m;
+    const shipsPlacement = {};
+    const board = new Array(n);
+
+    //Set up the board with undefined as the empty state
+    for (let i = 0; i < m; i++) {
+        board[i] = new Array(m).fill(undefined);
     }
 
-    return Object.assign(Object.create({
-        printBoard,
-        checkShipPlacementCoordinate, //Use for testing only, since look up coordinate should replace this
-        checkCoordinate,
-        placeShip,
-        lookupCoordinate,
-        receiveAttack,
-        isAllSunk,
-    }), {
+    return Object.assign(Object.create(
+        GameBoardProto
+    ), {
         limY, limX, board, shipsPlacement,
     })
 }
 
-module.exports = Gameboard;
+//Tracking board only responsible for displaying shots made. if hit something it will label the enemy vessel discovered.
+//and miss if otherwise.
+function TrackingGameBoard(n = 10, m = 10) {
+    const limY = n;
+    const limX = m;
+    const board = new Array(n);
+
+    //Set up the board with undefined as the empty state
+    for (let i = 0; i < m; i++) {
+        board[i] = new Array(m).fill(undefined);
+    }
+
+    return Object.assign(Object.create(
+        TrackingGameBoardProto
+    ), {
+        limX, limY, board,
+    })
+}
+
+module.exports = {Gameboard, TrackingGameBoard};

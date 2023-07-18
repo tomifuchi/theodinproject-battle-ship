@@ -6,31 +6,34 @@
     Ships should have a hit() function that increases the number of ‘hits’ in your ship.
     isSunk() should be a function that calculates it based on their length and the number of ‘hits’.
 
-    Okay that's the requirement. I will complete this implementation
 */
 
+/*
+Input for vesselType
 const vesselTypeExample = {
     name: 'Destroyer',
     length: 2, 
 }
-function Ship(vesselType) {
+*/
 
-    function isSunk() {
+const shipProto = {
+    isSunk: function isSunk() {
         if(!this.sunk) {
             if(this.hitsTaken === this.length) {
                 this.sunk = true;
             }
         }
         return this.sunk;
-    }
-
-    function hit() {
+    },
+    hit: function hit() {
         this.hitsTaken++;
     }
+}
 
-    return Object.assign(Object.create({
-        hit, isSunk,
-    }),
+function Ship(vesselType) {
+    return Object.assign(Object.create(
+        shipProto
+    ),
     {
         ...vesselType,
         hitsTaken: 0,

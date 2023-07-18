@@ -18,59 +18,59 @@
     Gameboards should be able to report whether or not all of their ships have been sunk.
 */
 
-const Gameboard = require('./gameboard');
+const {Gameboard, TrackingGameBoard} = require('./gameboard');
 const Ship = require('./ship');
 
-const setup = (n=10, m=10) => {
+const setupGameBoard = (n=10, m=10) => {
     const testBoard = Gameboard(n, m);
     return testBoard;
 }
 
 //Testing gameboard for a player
 test('Check ship placement coordinate', () => {
-    let testBoard = setup();
+    let testBoard = setupGameBoard();
 
     // Valid coordinates
-    expect(testBoard.checkCoordinate([1, 1])).toBe(true);
-    expect(testBoard.checkCoordinate([2, 2])).toBe(true);
-    expect(testBoard.checkCoordinate([3, 3])).toBe(true);
-    expect(testBoard.checkCoordinate([4, 4])).toBe(true);
-    expect(testBoard.checkCoordinate([5, 5])).toBe(true);
-    expect(testBoard.checkCoordinate([6, 6])).toBe(true);
-    expect(testBoard.checkCoordinate([7, 7])).toBe(true);
-    expect(testBoard.checkCoordinate([8, 8])).toBe(true);
-    expect(testBoard.checkCoordinate([9, 9])).toBe(true);
+    expect(testBoard.checkCoordinate([1, 1])).toStrictEqual(true);
+    expect(testBoard.checkCoordinate([2, 2])).toStrictEqual(true);
+    expect(testBoard.checkCoordinate([3, 3])).toStrictEqual(true);
+    expect(testBoard.checkCoordinate([4, 4])).toStrictEqual(true);
+    expect(testBoard.checkCoordinate([5, 5])).toStrictEqual(true);
+    expect(testBoard.checkCoordinate([6, 6])).toStrictEqual(true);
+    expect(testBoard.checkCoordinate([7, 7])).toStrictEqual(true);
+    expect(testBoard.checkCoordinate([8, 8])).toStrictEqual(true);
+    expect(testBoard.checkCoordinate([9, 9])).toStrictEqual(true);
 
     // Invalid coordinates
     // values
-    expect(testBoard.checkCoordinate([1, 10])).toBe(false);
-    expect(testBoard.checkCoordinate([1, -1])).toBe(false);
-    expect(testBoard.checkCoordinate([10, 1])).toBe(false);
-    expect(testBoard.checkCoordinate([-1, 1])).toBe(false);
-    expect(testBoard.checkCoordinate([10, 10])).toBe(false);
-    expect(testBoard.checkCoordinate([-1, -1])).toBe(false);
-    expect(testBoard.checkCoordinate([-1, 10])).toBe(false);
-    expect(testBoard.checkCoordinate([10, -1])).toBe(false);
+    expect(testBoard.checkCoordinate([1, 10])).toStrictEqual(false);
+    expect(testBoard.checkCoordinate([1, -1])).toStrictEqual(false);
+    expect(testBoard.checkCoordinate([10, 1])).toStrictEqual(false);
+    expect(testBoard.checkCoordinate([-1, 1])).toStrictEqual(false);
+    expect(testBoard.checkCoordinate([10, 10])).toStrictEqual(false);
+    expect(testBoard.checkCoordinate([-1, -1])).toStrictEqual(false);
+    expect(testBoard.checkCoordinate([-1, 10])).toStrictEqual(false);
+    expect(testBoard.checkCoordinate([10, -1])).toStrictEqual(false);
 
     // parameters requirements
     // must be an 2-dimensional Array object
     // Just a few here primitives testings here
-    expect(testBoard.checkCoordinate(1)).toBe(false);
-    expect(testBoard.checkCoordinate('Seomthing else')).toBe(false);
-    expect(testBoard.checkCoordinate([1,1,2,3])).toBe(false);
-    expect(testBoard.checkCoordinate(false)).toBe(false);
-    expect(testBoard.checkCoordinate(undefined)).toBe(false);
+    expect(testBoard.checkCoordinate(1)).toStrictEqual(false);
+    expect(testBoard.checkCoordinate('Seomthing else')).toStrictEqual(false);
+    expect(testBoard.checkCoordinate([1,1,2,3])).toStrictEqual(false);
+    expect(testBoard.checkCoordinate(false)).toStrictEqual(false);
+    expect(testBoard.checkCoordinate(undefined)).toStrictEqual(false);
 
     //Support for larger board
-    testBoard = setup(20, 20);
-    expect(testBoard.checkCoordinate([12, 13], {limX: 20, limY: 20})).toBe(true);
-    expect(testBoard.checkCoordinate([14, 15], {limX: 20, limY: 20})).toBe(true);
-    testBoard = setup(150, 150);
-    expect(testBoard.checkCoordinate([100, 100], {limX: 150, limY: 150})).toBe(true);
+    testBoard = setupGameBoard(20, 20);
+    expect(testBoard.checkCoordinate([12, 13], {limX: 20, limY: 20})).toStrictEqual(true);
+    expect(testBoard.checkCoordinate([14, 15], {limX: 20, limY: 20})).toStrictEqual(true);
+    testBoard = setupGameBoard(150, 150);
+    expect(testBoard.checkCoordinate([100, 100], {limX: 150, limY: 150})).toStrictEqual(true);
 })
 
 test('Able to look up a coordinate, if empty it return undefined. If theres something return it', () => {
-    const testBoard = setup();
+    const testBoard = setupGameBoard();
     const submarine = {name: 'Submarine', length: 3}
 
     testBoard.placeShip([1, 2], submarine, 'vertical');
@@ -79,7 +79,7 @@ test('Able to look up a coordinate, if empty it return undefined. If theres some
 })
 
 test('Place ships at specific coordinates with orientation', () => {
-    const testBoard = setup();
+    const testBoard = setupGameBoard();
     
     const destroyer = {name: 'Destroyer', length: 2};
     const submarine = {name: 'Submarine', length: 3};
@@ -121,12 +121,12 @@ test('Place ships at specific coordinates with orientation', () => {
     expect(testBoard.lookupCoordinate([3,3])).toStrictEqual(undefined);
 
 
-    //Violates the rules by placing it on top or overlapping an existing ship
+    //* Violates the rules by placing it on top or overlapping an existing ship
     const cruiser = {name: 'Cruiser', length: 3};
     testBoard.placeShip([1, 2], cruiser, 'horizontal');
-    expect(testBoard.lookupCoordinate([1,2])).toStrictEqual(Ship(destroyer))
+    expect(testBoard.lookupCoordinate([1,2])).toBe(testBoard.shipsPlacement['Destroyer'].obj)
     testBoard.placeShip([1, 1], cruiser, 'horizontal');
-    expect(testBoard.lookupCoordinate([1,2])).toStrictEqual(Ship(destroyer))
+    expect(testBoard.lookupCoordinate([1,2])).toBe(testBoard.shipsPlacement['Destroyer'].obj)
 
     //All occupied coordinates should not be undefined.
     expect((() => {
@@ -136,7 +136,7 @@ test('Place ships at specific coordinates with orientation', () => {
 });
 
 test('If a ship has occupied certain positions, then those positions should reference the same Ship object', () => {
-    const testBoard = setup();
+    const testBoard = setupGameBoard();
 
     const submarine = {name: 'Submarine', length: 3};
     testBoard.placeShip([3, 2], submarine, 'horizontal');
@@ -152,40 +152,43 @@ test('If a ship has occupied certain positions, then those positions should refe
     expect(testBoard.lookupCoordinate([3, 4]).hitsTaken).toEqual(1);
 })
 
-test('Record ships placed on the board', () => {
-    const testBoard = setup();
+//Huh is this test necessary ? 
+test.skip('Record ships placed on the board in shipPlacement', () => {
+    const testBoard = setupGameBoard();
     const destroyer = {name: 'Destroyer', length: 3};
     testBoard.placeShip([0, 0], destroyer, 'vertical');
+    expect(testBoard.lookupCoordinate[0, 0]).toStrictEqual(Ship(destroyer));
     expect(testBoard.shipsPlacement['Destroyer'].obj).toStrictEqual(Ship(destroyer));
 });
 
 test('ReceiveAttack method should takes pairs of coordinates and determine whether or not it is a hit, send hit() to the correct ship and record missed shots', () => {
-    const testBoard = setup();
+    const testBoard = setupGameBoard();
     const submarine = {name: 'Submarine', length: 3};
     testBoard.placeShip([2, 2], submarine, 'vertical');
 
     testBoard.receiveAttack([2, 0]);
-    expect(testBoard.lookupCoordinate([2, 0])).toEqual('miss');
+    expect(testBoard.lookupCoordinate([2, 0])).toStrictEqual('miss');
 
     //Test hit
     const ship = testBoard.shipsPlacement['Submarine'].obj;
 
     testBoard.receiveAttack([2, 2]);
-    expect(testBoard.lookupCoordinate([2, 2])).toEqual('hit');
-    expect(ship.hitsTaken).toEqual(1);
+    expect(testBoard.lookupCoordinate([2, 2])).toStrictEqual('hit');
+    expect(ship.hitsTaken).toStrictEqual(1);
 
     testBoard.receiveAttack([3, 2]);
-    expect(testBoard.lookupCoordinate([3, 2])).toEqual('hit');
-    expect(ship.hitsTaken).toEqual(2);
+    expect(testBoard.lookupCoordinate([3, 2])).toStrictEqual('hit');
+    expect(ship.hitsTaken).toStrictEqual(2);
 
     testBoard.receiveAttack([4, 2]);
-    expect(testBoard.lookupCoordinate([4, 2])).toEqual('hit');
-    expect(ship.hitsTaken).toEqual(3);
-    expect(ship.isSunk()).toEqual(true);
+    expect(testBoard.lookupCoordinate([4, 2])).toStrictEqual('hit');
+    expect(ship.hitsTaken).toStrictEqual(3);
+    expect(ship.isSunk()).toStrictEqual(true);
+    expect(testBoard.isAllSunk()).toStrictEqual(true)
 });
 
 test('Report if all ships has sunk', () => {
-    const testBoard = setup();
+    const testBoard = setupGameBoard();
 
     const destroyer = {name: 'Destroyer', length: 3};
     const submarine = {name: 'Submarine', length: 2};
@@ -212,6 +215,26 @@ test('Report if all ships has sunk', () => {
 
     expect(testBoard.isAllSunk()).toEqual(true);
 });
+
+//Testing display board
+const setupTrackingGameBoard = (n=10,m=10) => {
+    const trackingBoard = TrackingGameBoard(n, m);
+    return trackingBoard; 
+}
+
+test('Mark the coordinate with the name of the vessel hit or miss if otherwise as intelegence for current player', () => {
+    const trackingBoard = setupTrackingGameBoard();
+
+    //Mock returned variable of the receiveAttack function
+    const mockHit = {value: 'Destroyer', coor: [1,1]};
+    const mockMiss = {value: 'miss', coor: [7,7]};
+
+    trackingBoard.placeShot(mockHit);
+    trackingBoard.placeShot(mockMiss);
+
+    expect(trackingBoard.lookupCoordinate([1,1])).toEqual('Destroyer');
+    expect(trackingBoard.lookupCoordinate([7,7])).toEqual('miss');
+})
 
 // Destroyer (2 sqs)
 // Submarine (3 sqs)

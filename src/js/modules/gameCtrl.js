@@ -10,8 +10,8 @@ let _playerBScore;
 let _gameMaxScore;
 
 //For debugging purpose
-let playerMove, AIMove;
-let playerMoveIndex=0, AIMoveIndex=0;
+let dbgPlayerMove, dbgAIMove;
+let dbgPlayerMoveIndex=0, dbgAIMoveIndex=0;
 
 function initialize(pA, pB, scoreToEndGame = 3) {
     gameCtrlLog.log('Initialzing...Setting up variables')
@@ -26,35 +26,49 @@ function initialize(pA, pB, scoreToEndGame = 3) {
 function _setUpShips(playerAShipsPlacement, playerBShipsPlacement) {
     /*Pass in an array of objects that is this example
     {
-        shipCoordinate: [0, 0],
-        ship: {name: 'Destroyer', length: 2},
+        coor: [0, 0],
+        vesselType: {name: 'Destroyer', length: 2},
         orientation: 'vertical'
     }
     */
     gameCtrlLog.log('Setting up ships');
 
     playerAShipsPlacement.forEach(item => {
-        _playerA.gameBoard.placeShip(item.shipCoordinate, item.ship, item.orientation);
+        _playerA.gameBoard.placeShip(item.coor, item.vesselType, item.orientation);
     })
 
     playerBShipsPlacement.forEach(item => {
-        _playerB.gameBoard.placeShip(item.shipCoordinate, item.ship, item.orientation);
+        _playerB.gameBoard.placeShip(item.coor, item.vesselType, item.orientation);
     })
 }
 
+/*
+gameDbg is an arrays of roundDbg corresponding to rounds you want to simmulate in a game
+you can have up to _gameMaxScore * 2 + 1 rounds if two players are very close in term of scoring.
+*/
 function startGame(gameDbg = null) {
     gameCtrlLog.log('Starting game....');
     while (!_checkEndGame()) {
         if(gameDbg){
-            gameDbg.forEach(roudnDbg => {
-                startRound(roudnDbg);
+            gameDbg.forEach(roundDbg => {
+                startRound(roundDbg);
             })
         }
+        gameCtrlLog.log(`WINNER IS ${Math.max(_playerAScore, _playerBScore) ? 'PlayerA' : 'PlayerB'} win the GAME`);
     }
     gameCtrlLog.log('GAME END REACHED!');
-    gameCtrlLog.log(`WINNER IS ${Math.max(_playerAScore, _playerBScore) ? 'PlayerA' : 'PlayerB'} win the GAME`);
 }
 
+/*
+roundDbg look like this
+{
+    playerShipsPlacement, 
+    AIShipsPlacement,
+    dbgPlayerMove, dbgAIMove,
+    AGoFirst,
+}
+this is use for testing only. To simmulate a round, pass in the object with that configuration.
+*/
 function startRound(roundDbg = null) {
 
     _resetTurn();
@@ -63,11 +77,11 @@ function startRound(roundDbg = null) {
     //If debugs turns on then takes ship placement and both playerMovement and AIMovement from dbg
     if (roundDbg) {
         //Set up
-        _setUpShips(roundDbg.playerShips, roundDbg.AIShips);
-        AIMove = roundDbg.AIMove;
-        AIMoveIndex = 0;
-        playerMove = roundDbg.playerMove;
-        playerMoveIndex = 0;
+        _setUpShips(roundDbg.playerShipsPlacement, roundDbg.AIShipsPlacement);
+        dbgAIMove = roundDbg.dbgAIMove;
+        dbgAIMoveIndex = 0;
+        dbgPlayerMove = roundDbg.dbgPlayerMove;
+        dbgPlayerMoveIndex = 0;
         if(roundDbg.AGoFirst) _playerA.turn = true;
         else _playerB.turn =true;
     } else { 
@@ -123,10 +137,9 @@ function _setTurnRandom() {
 }
 
 function _resetGameBoards() {
-    gameCtrlLog.log('Resetting gameBoard, bindding new to GameBoard');
+    gameCtrlLog.log('Resetting, bindding new gameBoard and trackingBoard');
     _playerA.newBoard();
     _playerB.newBoard();
-
 }
 
 function _increaseScore(winner) {
@@ -152,11 +165,11 @@ function _getPlayerMove(currentPlayer, dbg=null) {
     //Get playerMoves here
     if(dbg) {
         if (currentPlayer == 'AI') {
-            return AIMove[AIMoveIndex++];
+            return dbgAIMove[dbgAIMoveIndex++];
         } else {
-            return playerMove[playerMoveIndex++];
+            return dbgPlayerMove[dbgPlayerMoveIndex++];
         }
-    }
+    } //else get real user input here
 }
 
 function _coinFlipTurn() {
@@ -166,11 +179,19 @@ function _coinFlipTurn() {
 
 function getPrivateVars() {
     return { _playerA, _playerB, _playerAScore, _playerBScore, _gameMaxScore, _endGame: _checkEndGame(), _endRound: _checkEndRound()}
+
+}
+
+//Reset scoring
+function resetScore() {
+    _playerAScore = 0;
+    _playerBScore = 0;
 }
 
 module.exports = {
     //Methods
     initialize, //To reset a game, initialize again.
+    resetScore,
     startRound,
     startGame,
     getPrivateVars,
