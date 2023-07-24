@@ -73,7 +73,7 @@ test('Simmulate a very close round, playerB should win this round because player
     expect(simmulateRound(losingMove, losingMove, false)).toEqual('playerB');
 });
 
-test('Simmulate the whole game, 3 rounds in total, and keeping score', () => {
+test.skip('Simmulate the whole game, 3 rounds in total, and keeping score', () => {
     const createRoundDbg = (dbgPlayerMove, dbgAIMove, AGoFirst=true) => ({
         dbgPlayerMove, dbgAIMove,
         playerShipsPlacement: presetsShipsPlacement,
@@ -112,7 +112,7 @@ test('Simmulate the whole game, 3 rounds in total, and keeping score', () => {
     expect(stats._endRound).toEqual(true);
 })
 
-test('Reset scoring should work as intended', () => {
+test.skip('Reset scoring should work as intended', () => {
     const createRoundDbg = (dbgPlayerMove, dbgAIMove, AGoFirst=true) => ({
         dbgPlayerMove, dbgAIMove,
         playerShipsPlacement: presetsShipsPlacement,

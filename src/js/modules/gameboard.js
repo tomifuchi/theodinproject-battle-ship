@@ -105,7 +105,7 @@ const TrackingGameBoardProto = {
     },
 
     //Place shot on the tracking board is it a hit or a miss and what type of vessel it is
-    //Shot info should connect with receiattack returning shotInfo which contains {hit: true/false, coordinateInfo: Ship/undefined}
+    //Shot info should connect with receiattack returning shotInfo which contains {value: Ship or'miss', coor}
     placeShot: function placeShot(shotInfo) {
         if(shotInfo && this.checkShotPlacementCoordinate(shotInfo.coor)){
             this.board[shotInfo.coor[0]][shotInfo.coor[1]] = shotInfo.value;
@@ -114,7 +114,7 @@ const TrackingGameBoardProto = {
     },
 }
 
-function Gameboard(n=10, m=10) {
+function GameBoard(n=10, m=10) {
     const limY = n;
     const limX = m;
     const shipsPlacement = {};
@@ -151,4 +151,4 @@ function TrackingGameBoard(n = 10, m = 10) {
     })
 }
 
-module.exports = {Gameboard, TrackingGameBoard};
+module.exports = {GameBoard, TrackingGameBoard};

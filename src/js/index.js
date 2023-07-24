@@ -77,97 +77,42 @@ Finish it up
 
 */
 
+require('../scss/style.scss');
+
 /*
-//Main game loop
-const Player = require('./modules/player');
-const Logger = require('./modules/sub_modules/logger');
+const display = require('./modules/display');
+const Ship = require('./modules/ship');
+const {GameBoard, TrackingGameBoard} = require('./modules/gameboard');
 
-const prompt = require('prompt-sync')();
+const {q} = require('short-dom-util');
 
-console.log('Initializing...');
+const destroyer = {name: 'Destroyer', length: 2};
+const submarine = {name: 'Submarine', length: 3};
+    
+const testBoard = GameBoard();
+const testTrackingBoard = TrackingGameBoard();
 
-const gameLog = Logger('Game log');
-const playerA = Player('PlayerA');
-const playerB = Player('PlayerB');
-const playerAGameBoard = playerA.gameBoard.receiveAttack.bind(playerA.gameBoard);
-const playerBGameBoard = playerB.gameBoard.receiveAttack.bind(playerB.gameBoard);
+//valid inputs
+testBoard.placeShip([1, 2], destroyer, 'vertical');
+testBoard.placeShip([4, 4], submarine, 'horizontal');
 
-const AIMoveLose = [[0, 0], [1, 0],[1, 1], [0, 0],[2,2], [3,3], [4,4], [5,5], [6,6], [7, 7], [8,8], [9,9], [1, 2], [1, 3], [1, 4], [5, 7], [6, 4], [8, 9], [7, 4], [9, 0], [9, 2], [9, 5]]
-const AIMove = [[0, 0], [1, 0],[1, 1], [2,2], [3,3], [4,4], [5,5], [6,6], [7, 7], [8,8], [9,9], [1, 2], [1, 3], [1, 4], [5, 7], [6, 4], [8, 9], [7, 4], [9, 0], [9, 2], [9, 5]]
+testTrackingBoard.placeShot({value: Ship(destroyer), coor: [3, 2]});
+testTrackingBoard.placeShot({value: Ship(submarine), coor: [7, 7]});
 
+console.log('testBoard');
+testBoard.printBoard();
+console.log('playerBoard');
+testTrackingBoard.printBoard();
 
-function gameLoop() {
+display.renderBoard(q('#tracking-board'), testTrackingBoard.board);
+display.renderBoard(q('#player-board'), testBoard.board);
 
-    function changeTurn() {
-        playerA.turn = playerB.turn;
-        playerB.turn = !playerB.turn;
-    }
-
-    function checkEndGame() {
-        return playerA.gameBoard.isAllSunk() || playerB.gameBoard.isAllSunk();
-    }
-
-    console.log('Round Start!!');
-    //Let Player A play first
-    playerA.turn = true;
-
-
-    let i = 0;
-    while (!checkEndGame()) {
-        console.log('--------------------------');
-        console.log('PlayerA turn');
-        console.log('--------------------------');
-        console.log(`Turn ${i} playerA turn: ${playerA.turn}, player B turn: ${playerB.turn}`);
-
-        console.log('Enemy board Reference')
-        playerB.gameBoard.printBoard();
-
-        console.log('Your board')
-        playerA.gameBoard.printBoard();
-
-
-        //A move
-        let invalidMove = true;
-        while (invalidMove) {
-            console.log('Make your move');
-            const moveX = Number(prompt('Get x'));
-            const moveY = Number(prompt('Get Y'));
-            invalidMove = playerA.attack([moveX, moveY], playerBGameBoard) ? false : true;
-            console.log('Your move: ', invalidMove);
-            console.log('Your move by lookup: ', playerB.gameBoard.lookupCoordinate([moveX, moveY]));
-        }
-        i++;
-        console.log('----------------------------------')
-        console.log('END PLAYER A TURN');
-        console.log('----------------------------------')
-        changeTurn();
-
-        console.log('--------------------------');
-        console.log('PlayerB turn');
-        console.log('--------------------------');
-        if (checkEndGame()) break;
-        //B move
-        console.log(`Turn ${i} playerA turn: ${playerA.turn}, player B turn: ${playerB.turn}`);
-
-        console.log('Enemy board Reference')
-        playerA.gameBoard.printBoard();
-
-        console.log('Your board')
-        playerB.gameBoard.printBoard();
-
-        playerB.attack(AIMove[i], playerAGameBoard);
-        console.log('Your move: ', AIMove[i]);
-        console.log('Your move by lookup: ', playerA.gameBoard.lookupCoordinate(AIMove[i]));
-
-        i++;
-        console.log('----------------------------------')
-        console.log('END PLAYER B TURN');
-        console.log('----------------------------------')
-        changeTurn();
-    }
-
-    console.log('==================')
-    console.log('END ROUND');
-    console.log('==================')
+function reRender() {
+    const testSubject = {name: 'Test', length: 4};
+    testBoard.placeShip([6,6], testSubject, 'vertical');
+    display.renderBoard(q('#player-board'), testBoard.board);
+    testBoard.printBoard();
 }
+
+q('#rerender-test-btn').onclick = reRender;
 */

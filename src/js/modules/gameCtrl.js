@@ -45,7 +45,6 @@ function _setUpShips(playerAShipsPlacement, playerBShipsPlacement) {
 /*
 gameDbg is an arrays of roundDbg corresponding to rounds you want to simmulate in a game
 you can have up to _gameMaxScore * 2 + 1 rounds if two players are very close in term of scoring.
-*/
 function startGame(gameDbg = null) {
     gameCtrlLog.log('Starting game....');
     while (!_checkEndGame()) {
@@ -58,6 +57,8 @@ function startGame(gameDbg = null) {
     }
     gameCtrlLog.log('GAME END REACHED!');
 }
+If you need scoring in a game
+*/
 
 /*
 roundDbg look like this
@@ -193,6 +194,6 @@ module.exports = {
     initialize, //To reset a game, initialize again.
     resetScore,
     startRound,
-    startGame,
+    //startGame,
     getPrivateVars,
 }

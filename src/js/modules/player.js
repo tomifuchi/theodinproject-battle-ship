@@ -1,8 +1,8 @@
-const {Gameboard, TrackingGameBoard} = require('./gameboard');
+const {GameBoard, TrackingGameBoard} = require('./gameboard');
 
 function Player(name) {
 
-    const gameBoard = Gameboard(10, 10);
+    const gameBoard = GameBoard(10, 10);
     const trackingBoard = TrackingGameBoard(10, 10);
     // Destroyer (2 sqs)
     // Submarine (3 sqs)
@@ -19,7 +19,7 @@ function Player(name) {
     }
 
     function newBoard() {
-        this.gameBoard = Gameboard();
+        this.gameBoard = GameBoard();
         this.trackingBoard = TrackingGameBoard();
     }
 
