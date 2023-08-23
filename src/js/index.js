@@ -1,4 +1,5 @@
 //This video explain perfectly how to play and what is the rules
+//This video explain perfectly how to play and what is the rules
 //for battle ship
 //https://www.youtube.com/watch?v=4gHJlYLomrs
 /*
@@ -77,42 +78,132 @@ Finish it up
 
 */
 
+/*
+    Progress:
+        Front end can be made with HTML canvas to draw out animations and dynamic interaction.
+        https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript
+        Read here for more info
+
+        After a game is made on this idea, this will be implemented on this project to make the frontend
+        along with all the assets made.
+*/
+
 require('../scss/style.scss');
 
-/*
 const display = require('./modules/display');
 const Ship = require('./modules/ship');
 const {GameBoard, TrackingGameBoard} = require('./modules/gameboard');
 
-const {q} = require('short-dom-util');
+const {q, qa, tc} = require('short-dom-util');
 
 const destroyer = {name: 'Destroyer', length: 2};
 const submarine = {name: 'Submarine', length: 3};
     
-const testBoard = GameBoard();
+const testGameBoard = GameBoard();
 const testTrackingBoard = TrackingGameBoard();
 
 //valid inputs
-testBoard.placeShip([1, 2], destroyer, 'vertical');
-testBoard.placeShip([4, 4], submarine, 'horizontal');
+//testGameBoard.placeShip([1, 2], destroyer, 'vertical');
+//testGameBoard.placeShip([4, 4], submarine, 'horizontal');
+//
+//testTrackingBoard.placeShot({value: Ship(destroyer), coor: [3, 2]});
+//testTrackingBoard.placeShot({value: Ship(submarine), coor: [7, 7]});
 
-testTrackingBoard.placeShot({value: Ship(destroyer), coor: [3, 2]});
-testTrackingBoard.placeShot({value: Ship(submarine), coor: [7, 7]});
-
-console.log('testBoard');
-testBoard.printBoard();
-console.log('playerBoard');
+console.log('tracking Board');
 testTrackingBoard.printBoard();
+console.log('player Board');
+testGameBoard.printBoard();
 
 display.renderBoard(q('#tracking-board'), testTrackingBoard.board);
-display.renderBoard(q('#player-board'), testBoard.board);
+display.renderBoard(q('#player-board'), testGameBoard.board);
 
-function reRender() {
-    const testSubject = {name: 'Test', length: 4};
-    testBoard.placeShip([6,6], testSubject, 'vertical');
-    display.renderBoard(q('#player-board'), testBoard.board);
-    testBoard.printBoard();
+
+function reRenderCell(target, shipCoordinates, board) {
+    //Update cell to similar to boardCell
+    shipCoordinates.forEach(coor => {
+        tc(q(`[cell="${coor[0]}${coor[1]}"]`, target), board[coor[0]][coor[1]].name)
+    })
 }
 
-q('#rerender-test-btn').onclick = reRender;
-*/
+
+let coor;
+let shipCoordinates;
+let orientation = 'vertical';
+let vesselType = {name: 'Destroyer', length: 3};
+
+qa('#player-board .board-cell').forEach(item => {item.addEventListener(
+    "click", (event) => {
+        shipCoordinates = testGameBoard.checkShipPlacementCoordinate(coor, vesselType, orientation);
+        if(shipCoordinates){
+            tc(q('#place-status'), "PLACEMENT POSSIBLE")
+            testGameBoard.placeShip(coor, vesselType, orientation);
+            reRenderCell(q('#player-board'), shipCoordinates, testGameBoard.board)
+            hightLightPlacement(q('#player-board'), shipCoordinates);
+        }
+        else
+            tc(q('#place-status'), "PLACEMENT NOT!!!! POSSIBLE")
+}),
+    false
+})
+
+//Hightlight with error if not found cell it will apear red
+function hightLightPlacementSelection(target, shipCoordinates) {
+
+    if(shipCoordinates.every(coor => testGameBoard.lookupCoordinate(coor) == undefined)) {
+        shipCoordinates.forEach(coor => {
+            q(`[cell="${coor[0]}${coor[1]}"]`, target).style.background = "orange"
+        })
+    } else { //If not enough cell to fill use the logic here to determined if you can place the ship or not
+        shipCoordinates.forEach(coor => {
+            q(`[cell="${coor[0]}${coor[1]}"]`, target).style.background = "red"
+        })
+    }
+}
+
+function hightLightPlacement(target, shipCoordinates){
+    shipCoordinates.forEach(coor => {
+        q(`[cell="${coor[0]}${coor[1]}"]`, target).style.background = "green"
+    })
+}
+
+function bindCells() {
+    qa('#player-board .board-cell').forEach(item => {
+        item.addEventListener(
+            "mouseover",
+            (event) => {
+                coor = Array.from(event.target.getAttribute('cell'), (num) => Number(num));
+                shipCoordinates = testGameBoard.getTheoreticalPlacementCoordinate(coor, vesselType, orientation)
+                hightLightPlacementSelection(q('#player-board'), shipCoordinates);
+            },
+            false,
+        )
+    });
+
+    qa('#player-board .board-cell').forEach(item => {
+        item.addEventListener(
+            "mouseout",
+            (event) => {
+                if (event.target.style) {
+                    if(testGameBoard.checkShipPlacementCoordinate(coor, vesselType, orientation)) {
+                        shipCoordinates.forEach(coor => {
+                            if (q(`[cell="${coor[0]}${coor[1]}"]`, q('#player-board'))) {
+                                q(`[cell="${coor[0]}${coor[1]}"]`, q('#player-board')).style.background = ""
+                                // reset the color after a short delay
+                            }
+                        });
+                    }
+                }
+            },
+            false,
+        )
+    });
+}
+/*
+q('#flip-btn').addEventListener('click', () => orientation = orientation == 'vertical' ? 'horizontal' : 'vertical');
+
+window.addEventListener('keyup', event => {
+    if (event.key == ' ')
+        orientation = orientation == 'vertical' ? 'horizontal' : 'vertical'
+});*/
+
+bindCells();

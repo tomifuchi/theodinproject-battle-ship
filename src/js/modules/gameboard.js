@@ -39,27 +39,12 @@ const GameBoardProto = {
 
     //Place a ship at a coordinate with specified orientation
     placeShip: function placeShip(coor, vesselType, orientation) {
-        if (this.checkShipPlacementCoordinate(coor) && (orientation === 'vertical' || orientation === 'horizontal')) {
-            //Pubsub message goes here
+        const shipCoordinates = this.checkShipPlacementCoordinate(coor, vesselType, orientation);
+        if (shipCoordinates) {
             const ship = Ship(vesselType);
-            const shipCoordinates = [coor];
-            if (orientation == 'horizontal') {
-                for(let i = 0;i < ship.length;i ++) {
-                    shipCoordinates[i] = [coor[0], coor[1] + i];
-                }
-            } else if (orientation == 'vertical') {
-                for(let i = 1;i < ship.length;i ++) {
-                    shipCoordinates[i] = [coor[0] + i, coor[1]];
-                }
-            }
-
-            //Potential improvements here
-            if(shipCoordinates.every((coor => (this.checkShipPlacementCoordinate(coor))))){
-                shipCoordinates.forEach((coor) => this.board[coor[0]][coor[1]] = ship);
-                this.shipsPlacement[ship.name] = {obj: ship, coordinate:shipCoordinates};
-                //console.log(this.shipsPlacement);
-                return shipCoordinates;
-            } //else do something with invalid inputs.
+            shipCoordinates.forEach((coor) => this.board[coor[0]][coor[1]] = ship);
+            this.shipsPlacement[ship.name] = {obj: ship, coordinate:shipCoordinates};
+            return shipCoordinates;
         } //Else do something to invalid arguments.
     },
 
@@ -67,8 +52,29 @@ const GameBoardProto = {
     //* Is a coordinate
     //* Within the limit of the playing board
     //* And it should be undefined.
-    checkShipPlacementCoordinate: function checkShipPlacementCoordinate(coor) {
-        return (this.checkCoordinate(coor) && this.lookupCoordinate(coor) === undefined);
+    //* Depends on what type of vessel it is, return true or false when can it be place or not
+    checkShipPlacementCoordinate: function checkShipPlacementCoordinate(coor, vesselType, orientation) {
+        if (this.checkCoordinate(coor) && this.lookupCoordinate(coor) === undefined && (orientation === 'vertical' || orientation === 'horizontal')) {
+            const shipCoordinates = this.getTheoreticalPlacementCoordinate(coor, vesselType, orientation);
+            return shipCoordinates.every(coor => (this.checkCoordinate(coor) && this.lookupCoordinate(coor) === undefined)) ? shipCoordinates:undefined
+        } else return undefined;
+    },
+
+    getTheoreticalPlacementCoordinate(coor, vesselType, orientation) {
+        const shipCoordinates = [coor];
+
+        //Theoritical placement
+        if (orientation == 'horizontal') {
+            for(let i = 0;i < vesselType.length;i ++) {
+                shipCoordinates[i] = [coor[0], coor[1] + i];
+            }
+        } else if (orientation == 'vertical') {
+            for(let i = 1;i < vesselType.length;i ++) {
+                shipCoordinates[i] = [coor[0] + i, coor[1]];
+            }
+        }
+
+        return shipCoordinates;
     },
 
     //Receive attack and check attack is kinda funky, try to refactor this area here

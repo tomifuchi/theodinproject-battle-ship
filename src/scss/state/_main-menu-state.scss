@@ -1,0 +1,36 @@
+#display.main-menu-state {
+    width: 100%;
+    height: 100vh;
+
+    @include flex($justify: center, $align: center);
+
+    nav {
+        @include flex($direction: column, $align: center, $justify: center);
+        gap: 10px;
+
+        >* {
+            width: 100%;
+        }
+
+        .game-title,
+        button {
+            text-align: center;
+            padding: 10px;
+        }
+
+        //Add functionality to this rules button, so we can open and close the 
+        //rules
+        #rules {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #fff;
+            display: none;
+        }
+
+        .rules-mute-btn {
+            @include grid($column: repeat(2, 1fr));
+            gap: 10px;
+        }
+    }
+}

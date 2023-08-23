@@ -7,12 +7,15 @@ function renderBoard(target, board) {
     clc(target);
     //Redraw the board
     for(let i = 0; i < board.length; i++) {
-        const row = cea('div', {class: 'board-row'});
         for(let j = 0;j < board[i].length;j++) {
-            ap(row, tc(cea('div', {class: 'board-row-cell'}), board[i][j] ? board[i][j].name:'empty'));
+            ap(target, tc(cea('div', {class: 'board-cell', cell: `${i}${j}`}), board[i][j] ? board[i][j].name:'empty'));
         }
-        ap(target,row);
     }
+}
+
+//Update the target's board content
+function reRender(target, board) {
+
 }
 
 //The display will have main menu and 3 state MAIN MENU and GAME
@@ -95,25 +98,28 @@ function renderGameState() {
 
       .rules-mute-btn
         button#rules-button Rules
-        #rules.letter
-          .letter-header
-            h3 Friendly Country Naval Atlantic Fleet
-            h3 Delta Battleship
-            h3 April 26th, 1940
-          .letter-body
-            h4 Commander,
-            p You are about to engage in a strategic naval battle against an enemy fleet, with the objective of sinking their ships before they can do the same to yours. The game you will be playing is called "Battleship," and the rules are as follows:
-            ol
-              li Deployment: You will each command a fleet of ships, including aircraft carrier, battleship, cruiser, destroyer, and submarine. Your fleet will be secretly placed on a grid, with each ship occupying a specified number of squares.
-              li The Grid: The grid is divided into columns (0-9) and rows (0-9). Each square on the grid represents a position in the ocean where a ship can be placed.
-              li Placement Restrictions: Ships cannot overlap or touch each other, not even diagonally. Ships must be placed according to their dimensions, with aircraft carriers occupying five squares, battleships four squares, cruisers and submarines three squares, destroyers two squares each.
-              li The Battle Begins: You will take turns firing at your opponent's fleet. On your turn, you select a column and a row coordinate, attempting to guess the position of an enemy ship. Your opponent will then respond with a hit or a miss.
-              li Hits and Misses: If your shot lands on an enemy ship, it is considered a hit, and the ship is considered damaged. If all of a ship's hit points are exhausted, it is considered sunk. A miss indicates that your shot did not hit any enemy ships. You can't shoot the same coordinate twice.
-              li Identifying Ships: After a hit, your opponent will reveal the ship that was hit but not its exact position. You will then mark that ship on your board to keep track of it.
-              li Game Continues: After a hit or a miss, your turn continues with another shot. You may fire a shot during your turn, but once you have ended your turn, the enemy will have a chance to fire back.
-              li Sinking the Enemy Fleet: Your objective is to sink all of your opponent's ships. Once all of their ships have been sunk, you will win the battle and secured the victory for your nation.
-            p Remember, Commander, success in this battle depends on your ability to outwit and outmaneuver your opponent. Use your knowledge of naval tactics, strategy, and the element of surprise to gain the upper hand and emerge victorious from this high-stakes engagement. 
-            p Good luck, and may the best commander win!
+            #rules.letter
+              button#rules-dismiss-btn Dismiss
+              .letter-content
+                .letter-header
+                  h3 Friendly Country Naval Atlantic Fleet
+                  h3 Delta Battleship
+                  h3 April 26th, 1940
+                .letter-body
+                  h4 Commander,
+                  p You are about to engage in a strategic naval battle against an enemy fleet, with the objective of sinking their ships before they can do the same to yours. The game you will be playing is called "Battleship," and the rules are as follows:
+                  ol
+                    li Deployment: You will each command a fleet of ships, including aircraft carrier, battleship, cruiser, destroyer, and submarine. Your fleet will be secretly placed on a grid, with each ship occupying a specified number of squares.
+                    li The Grid: The grid is divided into columns (0-9) and rows (0-9). Each square on the grid represents a position in the ocean where a ship can be placed.
+                    li Placement Restrictions: Ships cannot overlap or touch each other, not even diagonally. Ships must be placed according to their dimensions, with aircraft carriers occupying five squares, battleships four squares, cruisers and submarines three squares, destroyers two squares each.
+                    li The Battle Begins: You will take turns firing at your opponent's fleet. On your turn, you select a column and a row coordinate, attempting to guess the position of an enemy ship. Your opponent will then respond with a hit or a miss.
+                    li Hits and Misses: If your shot lands on an enemy ship, it is considered a hit, and the ship is considered damaged. If all of a ship's hit points are exhausted, it is considered sunk. A miss indicates that your shot did not hit any enemy ships. You can't shoot the same coordinate twice.
+                    li Identifying Ships: After a hit, your opponent will reveal the ship that was hit but not its exact position. You will then mark that ship on your board to keep track of it.
+                    li Game Continues: After a hit or a miss, your turn continues with another shot. You may fire a shot during your turn, but once you have ended your turn, the enemy will have a chance to fire back.
+                    li Sinking the Enemy Fleet: Your objective is to sink all of your opponent's ships. Once all of their ships have been sunk, you will win the battle and secured the victory for your nation.
+                  p Remember, Commander, success in this battle depends on your ability to outwit and outmaneuver your opponent. Use your knowledge of naval tactics, strategy, and the element of surprise to gain the upper hand and emerge victorious from this high-stakes engagement. 
+                  p Good luck, and may the best commander win!
+
 
         button#mute-sound Mute sound
     
@@ -127,6 +133,7 @@ function renderGameState() {
 
 function renderMainMenuState() {
     /*
+      #display.main-menu-state
         nav
           h3.game-title BATTLESHIPS
 
@@ -135,27 +142,29 @@ function renderMainMenuState() {
           .rules-mute-btn
             button#rules-button Rules
             #rules.letter
-              .letter-header
-                h3 Friendly Country Naval Atlantic Fleet
-                h3 Delta Battleship
-                h3 April 26th, 1940
-              .letter-body
-                h4 Commander,
-                p You are about to engage in a strategic naval battle against an enemy fleet, with the objective of sinking their ships before they can do the same to yours. The game you will be playing is called "Battleship," and the rules are as follows:
-                ol
-                  li Deployment: You will each command a fleet of ships, including aircraft carrier, battleship, cruiser, destroyer, and submarine. Your fleet will be secretly placed on a grid, with each ship occupying a specified number of squares.
-                  li The Grid: The grid is divided into columns (0-9) and rows (0-9). Each square on the grid represents a position in the ocean where a ship can be placed.
-                  li Placement Restrictions: Ships cannot overlap or touch each other, not even diagonally. Ships must be placed according to their dimensions, with aircraft carriers occupying five squares, battleships four squares, cruisers and submarines three squares, destroyers two squares each.
-                  li The Battle Begins: You will take turns firing at your opponent's fleet. On your turn, you select a column and a row coordinate, attempting to guess the position of an enemy ship. Your opponent will then respond with a hit or a miss.
-                  li Hits and Misses: If your shot lands on an enemy ship, it is considered a hit, and the ship is considered damaged. If all of a ship's hit points are exhausted, it is considered sunk. A miss indicates that your shot did not hit any enemy ships. You can't shoot the same coordinate twice.
-                  li Identifying Ships: After a hit, your opponent will reveal the ship that was hit but not its exact position. You will then mark that ship on your board to keep track of it.
-                  li Game Continues: After a hit or a miss, your turn continues with another shot. You may fire a shot during your turn, but once you have ended your turn, the enemy will have a chance to fire back.
-                  li Sinking the Enemy Fleet: Your objective is to sink all of your opponent's ships. Once all of their ships have been sunk, you will win the battle and secured the victory for your nation.
-                p Remember, Commander, success in this battle depends on your ability to outwit and outmaneuver your opponent. Use your knowledge of naval tactics, strategy, and the element of surprise to gain the upper hand and emerge victorious from this high-stakes engagement. 
-                p Good luck, and may the best commander win!
+              button#rules-dismiss-btn Dismiss
+              .letter-content
+                .letter-header
+                  h3 Friendly Country Naval Atlantic Fleet
+                  h3 Delta Battleship
+                  h3 April 26th, 1940
+                .letter-body
+                  h4 Commander,
+                  p You are about to engage in a strategic naval battle against an enemy fleet, with the objective of sinking their ships before they can do the same to yours. The game you will be playing is called "Battleship," and the rules are as follows:
+                  ol
+                    li Deployment: You will each command a fleet of ships, including aircraft carrier, battleship, cruiser, destroyer, and submarine. Your fleet will be secretly placed on a grid, with each ship occupying a specified number of squares.
+                    li The Grid: The grid is divided into columns (0-9) and rows (0-9). Each square on the grid represents a position in the ocean where a ship can be placed.
+                    li Placement Restrictions: Ships cannot overlap or touch each other, not even diagonally. Ships must be placed according to their dimensions, with aircraft carriers occupying five squares, battleships four squares, cruisers and submarines three squares, destroyers two squares each.
+                    li The Battle Begins: You will take turns firing at your opponent's fleet. On your turn, you select a column and a row coordinate, attempting to guess the position of an enemy ship. Your opponent will then respond with a hit or a miss.
+                    li Hits and Misses: If your shot lands on an enemy ship, it is considered a hit, and the ship is considered damaged. If all of a ship's hit points are exhausted, it is considered sunk. A miss indicates that your shot did not hit any enemy ships. You can't shoot the same coordinate twice.
+                    li Identifying Ships: After a hit, your opponent will reveal the ship that was hit but not its exact position. You will then mark that ship on your board to keep track of it.
+                    li Game Continues: After a hit or a miss, your turn continues with another shot. You may fire a shot during your turn, but once you have ended your turn, the enemy will have a chance to fire back.
+                    li Sinking the Enemy Fleet: Your objective is to sink all of your opponent's ships. Once all of their ships have been sunk, you will win the battle and secured the victory for your nation.
+                  p Remember, Commander, success in this battle depends on your ability to outwit and outmaneuver your opponent. Use your knowledge of naval tactics, strategy, and the element of surprise to gain the upper hand and emerge victorious from this high-stakes engagement. 
+                  p Good luck, and may the best commander win!
 
             button#mute-sound Mute sound
-    
+
         main
         */
 }

@@ -1,0 +1,83 @@
+#display.game-state {
+
+    max-width: 750px;
+    min-height: 100vh;
+    padding: 50px;
+    margin: 0 auto;
+
+    @include flex($direction: column, $align: center, $justify: center);
+
+    nav {
+        @include flex($direction: column, $align: center, $justify: center);
+        gap: 10px;
+
+        max-width: 450px;
+        min-width: 300px;
+
+        > * {
+            width: 100%;
+        }
+
+        .game-title,
+        button {
+            text-align: center;
+            padding: 10px;
+        }
+
+        //Add functionality to this rules button, so we can open and close the 
+        //rules
+        #rules {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #fff;
+            display: none;
+        }
+
+        .rules-mute-btn {
+            @include grid($column: repeat(2, 1fr));
+            gap: 10px;
+        }
+    }
+
+    .board-container {
+        @include flex($justify: center);
+    }
+
+    h3 {
+        text-align: center;
+    }
+
+    .board{
+        border: 1px solid #000;
+        width: min-content;
+        text-align: center;
+
+        @include grid($row: repeat(10, 1fr), $column: repeat(10, 1fr));
+
+        &-cell {
+            border: 1px solid #000;
+            width: 35px;
+            height: 35px;
+            background: repeating-linear-gradient(
+                45deg,
+                #606dbc,
+                #606dbc 10px,
+                #465298 10px,
+                #465298 20px
+              );
+        }
+    }
+
+    #game-notification {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        padding: 50px;
+        border: 1px solid #000;
+        background-color: #fff;
+
+        display: none;
+    }
+}
